@@ -16,6 +16,8 @@ public class ProductController {
             
         }
         
+
+        
         Update productlst;
         
         System.debug('Data from lwc...'+ items);
