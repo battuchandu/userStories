@@ -1,0 +1,115 @@
+<template>
+	<lightning-card variant="Narrow">
+
+
+		<div class="slds-grid slds-gutters">
+			<div class="slds-col">
+				<p class="slds-m-around_medium">Click the button to create purchase order items.</p>
+			</div>
+			<div class="slds-col">
+				<lightning-button label="New Purchase Order Items" variant="neutral"
+					title="Click here to Create a Purchase Order" onclick={handleClickToOpen}></lightning-button>
+			</div>
+		</div>
+	</lightning-card>
+
+	<template if:true={mainComponent}>
+		<lightning-card>
+			<lightning-button label="Add Row" slot="actions" icon-name="utility:add" onclick={addRow}>
+			</lightning-button>
+			<template if:true={addRowFlag}>
+				<div
+					class="slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none modalBody">
+					<template if:true={isLoading}>
+						<lightning-spinner alternative-text="Loading" size="medium" class="spinnerClass">
+						</lightning-spinner>
+					</template>
+					<table class="slds-table slds-table_cell-buffer slds-table_bordered"
+						aria-labelledby="element-with-table-label other-element-with-table-label">
+						<thead>
+							<tr class="slds-line-height_reset">
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Account">Vendor</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Product">Product</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Quantity">Quantity</div>
+								</th>
+								<th class="" scope="col">
+									<div class="slds-truncate" title="Avail Items">Avail Items</div>
+								</th>
+                                <th class="" scope="col">
+									<div class="slds-truncate" title="Unit Price">Price</div>
+								</th>
+                                <th class="" scope="col">
+									<div class="slds-truncate" title="Sub Total">Sub Total</div>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<template for:each={items} for:item="obj" for:index="index">
+								<tr class="inputRows" key={obj.Id}>
+									<td data-label="Vendor">
+										<lightning-record-edit-form object-api-name="Purchase_Order__c">
+											<lightning-messages></lightning-messages>
+											<lightning-input-field field-name="Vendor_Account_Name__c" value={obj.Vendor_Account_Name__c}
+												variant="label-hidden"></lightning-input-field>
+										</lightning-record-edit-form>
+									</td>
+									<td data-label="Product">
+										<lightning-record-edit-form object-api-name="Purchase_Order_Item__c">
+											<lightning-messages></lightning-messages>
+											<lightning-input-field field-name="Product_Name__c" variant="label-hidden"
+												value={obj.Product_Name__c} data-id={index} onchange={handleProductChange}>
+											</lightning-input-field>
+										</lightning-record-edit-form>
+									</td>
+									<td data-label="Quantity">
+										<lightning-input type="number" class="fields" variant="label-hidden"
+											label="Quantity" name="Quantity" value={obj.Quantity__c} data-id={index}
+											onchange={handleQuantityChange} required></lightning-input>
+									</td>
+                                    <td data-label="Availe Items">
+										<template if:true={productDataDefaultValue}>
+                                            <div style="margin-top: 5px;" class={obj.stockClass}>
+                                                <span>{obj.AvailableStock}</span>
+                                            </div>
+                                        </template>
+									</td>
+									<td data-label="Price">
+										<template if:true={productDataDefaultValue}>
+                                            <div style="margin-top: 5px;">
+                                                <span>{obj.UnitPrice}</span>
+                                            </div>
+                                        </template>
+									</td>
+                                    <td data-label="Sub Total">
+										<template if:true={quantityDefaultValue}>
+                                            <div style="margin-top: 5px;">
+                                                <span>{obj.subTotalAmount}</span>
+                                            </div>
+                                        </template>
+									</td>
+									<td data-label="Actions">
+										<lightning-button-icon icon-name="action:delete" alternative-text="Delete"
+											title="Delete" data-id={obj.Id} onclick={handleDeleteAction}>
+										</lightning-button-icon>
+									</td>
+								</tr>
+							</template>
+						</tbody>
+					</table>
+					<template if:true={grandTotalValue}>
+                        <p style="float: right;margin-right: 12%;margin-top: 0%;font-weight: bold;">Grand Total : {grandTotal}</p>
+                    </template>
+				</div>
+				<div slot="footer">
+					<lightning-button variant="neutral" label="Cancel" onclick={closeAction}></lightning-button> &nbsp;
+					<lightning-button variant="brand" label="Save" onclick={handleInsertAction}></lightning-button>
+				</div>
+			</template>
+		</lightning-card>
+	</template>
+</template>
